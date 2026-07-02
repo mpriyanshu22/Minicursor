@@ -119,7 +119,7 @@ export default function ChatPanel({ messages, onSend, isLoading, onSuggestion })
             ref={textareaRef}
             id="chat-input"
             className="chat-textarea"
-            placeholder="Ask MiniCursor anything… (Shift+Enter for newline)"
+            placeholder="Ask MiniCursor anything…"
             value={input}
             onChange={e => {
               setInput(e.target.value)

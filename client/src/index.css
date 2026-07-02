@@ -679,14 +679,54 @@ body {
     padding: 10px 12px 12px;
   }
   
+  .input-wrap {
+    display: flex;
+    align-items: center;
+  }
+  
   .chat-textarea {
     font-size: 16px; /* Prevent iOS zoom */
-    padding: 12px 48px 12px 14px;
+    padding: 14px 48px 14px 14px;
     min-height: 48px;
   }
   
   .send-btn {
     width: 36px; height: 36px;
-    bottom: 6px; right: 6px;
+    bottom: auto;
+    top: 50%;
+    margin-top: -18px;
+    right: 6px;
   }
 }
+
+@media (max-width: 640px) {
+  /* Hide helper text on very small screens */
+  .input-hint {
+    display: none !important;
+  }
+  
+  /* Fix cramped file-view header */
+  .file-view-header {
+    height: auto;
+    min-height: var(--header-h);
+    padding: env(safe-area-inset-top, 12px) 16px 12px 16px;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  /* Ensure the title wraps gracefully if needed */
+  .file-view-title {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+  
+  /* Add padding to code view gutter so it's not flush */
+  .file-view-gutter {
+    padding-left: env(safe-area-inset-left, 12px) !important;
+  }
+  
+  .file-view-code {
+    padding-left: 4px;
+  }
+}
+
