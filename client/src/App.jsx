@@ -25,6 +25,7 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(false)
   const [activeFile, setActiveFile] = useState(null)
   const [viewMode, setViewMode] = useState('home') // 'home' or 'file'
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
   // ── Persisted state (localStorage) ───────────────────────────
   const [messages, setMessages] = useState(() =>
@@ -186,6 +187,9 @@ export default function App() {
     <div className="app-shell">
       <header className="header">
         <div className="header-logo">
+          <button className="mobile-menu-btn" onClick={() => setIsSidebarOpen(true)}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
           <div className="logo-icon">✦</div>
           <span className="logo-text">MiniCursor</span>
         </div>
@@ -220,8 +224,13 @@ export default function App() {
           <>
             <Sidebar
               sessionFiles={sessionFiles}
-              onFileClick={path => loadFileRef.current(path)}
+              onFileClick={path => {
+                loadFileRef.current(path)
+                setIsSidebarOpen(false)
+              }}
               activeFile={activeFile?.path}
+              isOpen={isSidebarOpen}
+              onClose={() => setIsSidebarOpen(false)}
             />
 
             <ChatPanel

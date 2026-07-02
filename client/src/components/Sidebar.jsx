@@ -43,7 +43,7 @@ function FileItem({ path, active, onClick }) {
   )
 }
 
-export default function Sidebar({ sessionFiles, onFileClick, activeFile }) {
+export default function Sidebar({ sessionFiles, onFileClick, activeFile, isOpen, onClose }) {
   const [showBrowser, setShowBrowser] = useState(false)
   const [browsePath, setBrowsePath]   = useState('')
   const [browseInput, setBrowseInput] = useState('')
@@ -62,8 +62,17 @@ export default function Sidebar({ sessionFiles, onFileClick, activeFile }) {
   }
 
   return (
-    <aside className="sidebar">
-      {/* ── Session Files ─────────────────────────── */}
+    <>
+      <div className={`sidebar-overlay ${isOpen ? 'open' : ''}`} onClick={onClose} />
+      <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
+        <div className="sidebar-header-mobile">
+          <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)' }}>EXPLORER</span>
+          <button className="mobile-close-btn" onClick={onClose}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
+        </div>
+
+        {/* ── Session Files ─────────────────────────── */}
       <div className="sidebar-section-title">Session Files</div>
 
       <div className="file-tree">
@@ -143,6 +152,7 @@ export default function Sidebar({ sessionFiles, onFileClick, activeFile }) {
           </div>
         ))}
       </div>
-    </aside>
+      </aside>
+    </>
   )
 }
