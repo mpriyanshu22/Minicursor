@@ -1,4 +1,4 @@
-import { useState } from 'react'
+
 
 // ── File icon map ─────────────────────────────────────────────
 const EXT_ICONS = {
@@ -57,23 +57,6 @@ function FileItem({ path, active, onClick, onDownload }) {
 }
 
 export default function Sidebar({ sessionFiles, onFileClick, activeFile, isOpen, onClose, onDownloadFile, onDownloadAll }) {
-  const [showBrowser, setShowBrowser] = useState(false)
-  const [browsePath, setBrowsePath]   = useState('')
-  const [browseInput, setBrowseInput] = useState('')
-  const [browseEntries, setBrowseEntries] = useState([])
-
-  async function browse(path) {
-    if (!path.trim()) return
-    try {
-      const res  = await fetch(`/api/files?path=${encodeURIComponent(path)}`)
-      const data = await res.json()
-      if (!data.error) {
-        setBrowsePath(data.path)
-        setBrowseEntries(data.entries)
-      }
-    } catch { }
-  }
-
   return (
     <>
       <div className={`sidebar-overlay ${isOpen ? 'open' : ''}`} onClick={onClose} />
@@ -120,63 +103,7 @@ export default function Sidebar({ sessionFiles, onFileClick, activeFile, isOpen,
           )}
         </div>
 
-        {/* ── File Browser (optional) ───────────────── */}
-        <div
-          className="sidebar-section-title"
-          style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}
-          onClick={() => setShowBrowser(s => !s)}
-        >
-          <span>File Browser</span>
-          <span style={{ fontSize: 9, marginLeft: 'auto' }}>{showBrowser ? '▾' : '▸'}</span>
-        </div>
 
-        {showBrowser && (
-          <>
-            <div className="cwd-input-wrap">
-              <input
-                className="cwd-input"
-                placeholder="Type a path and press Enter…"
-                value={browseInput}
-                onChange={e => setBrowseInput(e.target.value)}
-                onKeyDown={e => { if (e.key === 'Enter') browse(browseInput) }}
-                id="browse-path-input"
-              />
-            </div>
-            <div className="file-tree" style={{ maxHeight: 200, overflowY: 'auto' }}>
-              {browseEntries.map(item => (
-                <div
-                  key={item.path}
-                  className={`tree-item ${activeFile === item.path ? 'active' : ''}`}
-                  onClick={() => item.isDir ? browse(item.path) : onFileClick(item.path)}
-                  title={item.path}
-                  style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 5, overflow: 'hidden', minWidth: 0, flex: 1 }}>
-                    <span className="tree-item-icon">{item.isDir ? '📁' : getFileIcon(item.name)}</span>
-                    <span className="tree-item-name">{item.name}</span>
-                  </div>
-                  {!item.isDir && (
-                    <button
-                      className="file-item-download-btn"
-                      title="Download file"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        onDownloadFile(item.path)
-                      }}
-                    >
-                      📥
-                    </button>
-                  )}
-                </div>
-              ))}
-              {browseEntries.length === 0 && browsePath && (
-                <div style={{ padding: '8px 12px', color: 'var(--text-muted)', fontSize: '11px' }}>
-                  No files found
-                </div>
-              )}
-            </div>
-          </>
-        )}
 
       {/* ── Tools ────────────────────────────────────── */}
       <div className="tools-section">

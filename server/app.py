@@ -22,28 +22,6 @@ def not_found(e):
 
 # ── REST: file-system helpers ─────────────────────────────────────────────────
 
-@app.route("/api/files")
-def list_files():
-    path = request.args.get("path", ".")
-    try:
-        entries = []
-        for item in os.scandir(path):
-            try:
-                stat = item.stat()
-                entries.append({
-                    "name": item.name,
-                    "path": item.path.replace("\\", "/"),
-                    "isDir": item.is_dir(),
-                    "size": stat.st_size if item.is_file() else 0,
-                })
-            except PermissionError:
-                pass
-        entries.sort(key=lambda x: (not x["isDir"], x["name"].lower()))
-        return jsonify({"entries": entries, "path": os.path.abspath(path).replace("\\", "/")})
-    except Exception as e:
-        return jsonify({"error": str(e)}), 400
-
-
 @app.route("/api/read")
 def read_file_api():
     path = request.args.get("path", "")
