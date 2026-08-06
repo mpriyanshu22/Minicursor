@@ -730,3 +730,78 @@ body {
   }
 }
 
+/* ── File Download Styles ────────────────────────────────────── */
+.file-item-download-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  opacity: 0;
+  transition: opacity 0.2s, color 0.2s, background-color 0.2s;
+  flex-shrink: 0;
+}
+
+.tree-item:hover .file-item-download-btn {
+  opacity: 1;
+}
+
+.file-item-download-btn:hover {
+  color: var(--accent-light);
+  background: var(--bg-hover);
+}
+
+.download-zip-btn {
+  background: transparent;
+  border: none;
+  color: var(--accent-light);
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border-radius: 4px;
+  transition: var(--transition);
+}
+
+.download-zip-btn:hover {
+  background: var(--bg-hover);
+  color: var(--cyan);
+}
+
+.file-view-download-btn {
+  width: 28px;
+  height: 28px;
+  font-size: 12px;
+  background: var(--bg-hover);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+}
+
+.file-view-download-btn:hover {
+  background: var(--bg-active);
+  border-color: var(--border-accent);
+  color: var(--accent-light);
+}
+
+/* Ensure download buttons are visible on mobile/touch screens (no-hover) */
+@media (max-width: 768px) {
+  .file-item-download-btn {
+    opacity: 1;
+  }
+}
+
+

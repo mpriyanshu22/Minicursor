@@ -15,7 +15,7 @@ function getLanguage(ext) {
   return LANG_MAP[ext?.toLowerCase()] || 'plaintext'
 }
 
-export default function FileViewPage({ file, onBack }) {
+export default function FileViewPage({ file, onBack, onDownload }) {
   const codeRef = useRef(null)
 
   useEffect(() => {
@@ -44,8 +44,15 @@ export default function FileViewPage({ file, onBack }) {
           <span className="file-view-lang">{lang}</span>
         </div>
 
-        <div className="file-view-meta">
+        <div className="file-view-meta" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <span className="file-view-lines">{lines.length} lines</span>
+          <button
+            className="file-view-download-btn"
+            title="Download file"
+            onClick={() => onDownload(file.path)}
+          >
+            📥
+          </button>
         </div>
       </div>
 

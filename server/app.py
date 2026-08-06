@@ -1,5 +1,7 @@
 import os
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file
+import io
+import zipfile
 from flask_cors import CORS
 from flask_socketio import SocketIO
 from agent import run_agent_turn, clear_session
@@ -50,6 +52,50 @@ def read_file_api():
             content = f.read()
         ext = os.path.splitext(path)[1].lstrip(".")
         return jsonify({"content": content, "ext": ext})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+
+@app.route("/api/download")
+def download_file_api():
+    path = request.args.get("path", "")
+    try:
+        if not path or not os.path.exists(path) or not os.path.isfile(path):
+            return jsonify({"error": "File not found"}), 404
+        return send_file(os.path.abspath(path), as_attachment=True)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+
+@app.route("/api/download-all", methods=["POST"])
+def download_all_files_api():
+    data = request.json or {}
+    files = data.get("files", [])
+    if not files:
+        return jsonify({"error": "No files specified"}), 400
+
+    try:
+        memory_file = io.BytesIO()
+        with zipfile.ZipFile(memory_file, 'w', zipfile.ZIP_DEFLATED) as zipf:
+            for filepath in files:
+                filepath = filepath.strip()
+                if filepath and os.path.exists(filepath) and os.path.isfile(filepath):
+                    try:
+                        # Attempt to compute relative path from current working directory
+                        arcname = os.path.relpath(filepath, os.getcwd())
+                        # clean up any leading '..' to prevent directory traversal upon extraction
+                        if arcname.startswith(".."):
+                            arcname = os.path.basename(filepath)
+                    except Exception:
+                        arcname = os.path.basename(filepath)
+                    zipf.write(filepath, arcname)
+        memory_file.seek(0)
+        return send_file(
+            memory_file,
+            mimetype='application/zip',
+            as_attachment=True,
+            download_name='minicursor_session_files.zip'
+        )
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 

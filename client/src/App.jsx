@@ -182,6 +182,41 @@ export default function App() {
     if (socketRef.current) socketRef.current.emit('clear_session', { session_id: SESSION_ID })
   }
 
+  const handleDownloadFile = useCallback((path) => {
+    if (!path) return
+    const normalized = path.replace(/\\/g, '/')
+    const fileName = normalized.split('/').pop()
+    const a = document.createElement('a')
+    a.href = `/api/download?path=${encodeURIComponent(normalized)}`
+    a.download = fileName
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+  }, [])
+
+  const handleDownloadAllFiles = useCallback(async () => {
+    if (sessionFiles.length === 0) return
+    try {
+      const response = await fetch('/api/download-all', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ files: sessionFiles }),
+      })
+      if (!response.ok) throw new Error('Failed to create archive')
+      const blob = await response.blob()
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = 'minicursor_session_files.zip'
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      window.URL.revokeObjectURL(url)
+    } catch (err) {
+      console.error('Error downloading ZIP:', err)
+    }
+  }, [sessionFiles])
+
   // ── Render ────────────────────────────────────────────────────
   return (
     <div className="app-shell">
@@ -219,6 +254,7 @@ export default function App() {
               setViewMode('home')
               setActiveFile(null)
             }}
+            onDownload={handleDownloadFile}
           />
         ) : (
           <>
@@ -231,6 +267,8 @@ export default function App() {
               activeFile={activeFile?.path}
               isOpen={isSidebarOpen}
               onClose={() => setIsSidebarOpen(false)}
+              onDownloadFile={handleDownloadFile}
+              onDownloadAll={handleDownloadAllFiles}
             />
 
             <ChatPanel
